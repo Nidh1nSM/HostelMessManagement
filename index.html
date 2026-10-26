@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hostel Mess Management</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <section id="loginScreen" class="login-layout">
+    <div class="login-art">
+      <div class="brand brand-light"><span class="brand-mark">M</span><span>MessMate</span></div>
+      <div class="login-art-content">
+        <p class="eyebrow">HOSTEL MESS MANAGEMENT</p>
+        <h1>Eat well.<br />Track simply.</h1>
+        <p>Record the meals you eat and get a clear monthly bill based on your actual food choices.</p>
+        <div class="login-highlights">
+          <span><span class="dot"></span> Daily meal tracking</span>
+          <span><span class="dot"></span> Transparent monthly bills</span>
+          <span><span class="dot"></span> Simple student dashboard</span>
+        </div>
+      </div>
+      <div class="art-footer">A simple, student-friendly mess tracker.</div>
+    </div>
+
+    <div class="login-panel">
+      <div class="mobile-brand brand"><span class="brand-mark">M</span><span>MessMate</span></div>
+      <div class="login-card">
+        <p class="eyebrow">WELCOME</p>
+        <h2>Sign in to your mess</h2>
+        <p class="muted">Enter your admission number to continue.</p>
+        <form id="studentLoginForm">
+          <label for="admissionInput">Admission number</label>
+          <input id="admissionInput" name="admission" type="text" placeholder="e.g. AD2026001" autocomplete="username" required maxlength="30" />
+          <button class="button button-primary button-full" type="submit">Continue as student <span aria-hidden="true">→</span></button>
+        </form>
+        <div class="login-divider"><span>OR</span></div>
+        <button id="showAdminLogin" class="button button-outline button-full" type="button">Sign in as admin</button>
+        <form id="adminLoginForm" class="admin-login-form hidden">
+          <label for="adminPin">Demo admin PIN</label>
+          <input id="adminPin" type="password" inputmode="numeric" placeholder="Enter admin PIN" required />
+          <button class="button button-dark button-full" type="submit">Open admin dashboard</button>
+          <p class="hint">Demo PIN: <strong>1234</strong></p>
+        </form>
+        <p class="login-note"><span class="lock-icon">●</span> Prototype mode: data is saved in this browser only.</p>
+      </div>
+      <p class="copyright">© <span id="year"></span> MessMate · Hostel Mess Management</p>
+    </div>
+  </section>
+
+  <div id="appScreen" class="app-shell hidden">
+    <aside class="sidebar">
+      <a href="#" class="brand sidebar-brand" aria-label="MessMate home"><span class="brand-mark">M</span><span>MessMate</span></a>
+      <div class="sidebar-label">WORKSPACE</div>
+      <nav id="studentNav" class="side-nav">
+        <button class="nav-item active" data-view="studentHome"><span class="nav-icon">▦</span> Overview</button>
+        <button class="nav-item" data-view="mealEntry"><span class="nav-icon">＋</span> Record meals</button>
+        <button class="nav-item" data-view="studentBills"><span class="nav-icon">▤</span> Monthly bills</button>
+      </nav>
+      <nav id="adminNav" class="side-nav hidden">
+        <button class="nav-item active" data-view="adminHome"><span class="nav-icon">▦</span> Overview</button>
+        <button class="nav-item" data-view="adminRecords"><span class="nav-icon">☷</span> Meal records</button>
+        <button class="nav-item" data-view="adminPrices"><span class="nav-icon">₹</span> Food & prices</button>
+        <button class="nav-item" data-view="adminBills"><span class="nav-icon">▤</span> Monthly bills</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="storage-note"><span class="storage-dot"></span><div><strong>Local prototype</strong><small>Saved in this browser</small></div></div>
+        <button id="logoutButton" class="logout-button"><span>↪</span> Log out</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb"><span>MessMate</span><span class="crumb-slash">/</span><strong id="topbarSection">Overview</strong></div>
+        <div class="topbar-user"><div id="topbarAvatar" class="avatar">S</div><div><strong id="topbarName">Student</strong><small id="topbarRole">Student account</small></div></div>
+      </header>
+
+      <section id="studentHome" class="view">
+        <div class="page-heading">
+          <div><p class="eyebrow">STUDENT WORKSPACE</p><h1 id="studentWelcome">Good day!</h1><p class="muted">Track your meals and keep an eye on your monthly mess charges.</p></div>
+          <button class="button button-primary" data-go="mealEntry">＋ Record today's meals</button>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-top"><span>This month's charges</span><span class="stat-icon purple">₹</span></div><div id="studentMonthTotal" class="stat-value">₹0</div><div id="studentMonthLabel" class="stat-foot">Current month</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Meals recorded</span><span class="stat-icon green">✓</span></div><div id="studentMealCount" class="stat-value">0</div><div class="stat-foot">For the selected month</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Today's charge</span><span class="stat-icon orange">◷</span></div><div id="studentTodayTotal" class="stat-value">₹0</div><div class="stat-foot">Based on meals marked eaten</div></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Today's meals</h3><p class="muted">Your current meal entries</p></div><button class="text-button" data-go="mealEntry">Edit meals →</button></div>
+            <div id="todayMealsList" class="meal-summary-list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Monthly billing</h3><p class="muted">Charges accumulate from recorded meals</p></div><span class="pill pill-blue">Monthly</span></div>
+            <div class="billing-callout"><div class="billing-icon">▤</div><div><strong id="studentBillingMonth">Current month bill</strong><p>Your bill is based only on food items you mark as eaten.</p></div></div>
+            <button class="button button-outline button-full" data-go="studentBills">View monthly bill</button>
+          </article>
+        </div>
+        <article class="panel recent-panel">
+          <div class="panel-heading"><div><h3>Recent meal activity</h3><p class="muted">Your latest saved meal records</p></div><button class="text-button" data-go="studentBills">View bills →</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Date</th><th>Meal</th><th>Food items</th><th class="align-right">Charge</th></tr></thead><tbody id="studentRecentRows"></tbody></table></div>
+        </article>
+      </section>
+
+      <section id="mealEntry" class="view hidden">
+        <div class="page-heading"><div><p class="eyebrow">DAILY TRACKING</p><h1>Record your meals</h1><p class="muted">Select only the food items you actually ate. Your charges update automatically.</p></div></div>
+        <article class="panel meal-entry-panel">
+          <div class="form-row"><div><label for="mealDate">Meal date</label><input id="mealDate" type="date" /></div><div class="date-note"><span class="date-note-icon">i</span><span>You can edit today's entry or review an earlier date in this browser.</span></div></div>
+          <div id="mealEntryGroups" class="meal-groups"></div>
+          <div class="entry-footer"><div><span class="muted">Selected food total</span><strong id="entryTotal">₹0</strong></div><button id="saveMealsButton" class="button button-primary">Save meal record</button></div>
+        </article>
+      </section>
+
+      <section id="studentBills" class="view hidden">
+        <div class="page-heading"><div><p class="eyebrow">YOUR ACCOUNT</p><h1>Monthly bills</h1><p class="muted">Review your charges by month. Only saved meal entries are included.</p></div><div class="month-picker"><label for="studentBillMonth">Billing month</label><input id="studentBillMonth" type="month" /></div></div>
+        <div id="studentBillContent"></div>
+      </section>
+
+      <section id="adminHome" class="view hidden">
+        <div class="page-heading"><div><p class="eyebrow">ADMINISTRATION</p><h1>Mess overview</h1><p class="muted">Review recorded meals, maintain prices, and generate monthly bills.</p></div><button class="button button-primary" data-go="adminBills">Generate monthly bills →</button></div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-top"><span>Students with records</span><span class="stat-icon purple">♙</span></div><div id="adminStudentCount" class="stat-value">0</div><div class="stat-foot">Unique admission numbers</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Meals this month</span><span class="stat-icon green">✓</span></div><div id="adminMealCount" class="stat-value">0</div><div class="stat-foot">Saved meal sessions</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Recorded charges</span><span class="stat-icon orange">₹</span></div><div id="adminMonthTotal" class="stat-value">₹0</div><div id="adminMonthFoot" class="stat-foot">Current month total</div></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel"><div class="panel-heading"><div><h3>Monthly collection overview</h3><p class="muted">Recorded food charges by meal type</p></div></div><div id="adminMealBreakdown" class="breakdown-list"></div></article>
+          <article class="panel"><div class="panel-heading"><div><h3>Quick actions</h3><p class="muted">Manage the mess prototype</p></div></div><div class="quick-actions"><button data-go="adminRecords"><span class="quick-icon">☷</span><span><strong>View meal records</strong><small>Browse student entries</small></span><span class="quick-arrow">→</span></button><button data-go="adminPrices"><span class="quick-icon">₹</span><span><strong>Manage food prices</strong><small>Update item charges</small></span><span class="quick-arrow">→</span></button><button data-go="adminBills"><span class="quick-icon">▤</span><span><strong>Monthly billing</strong><small>Generate student bills</small></span><span class="quick-arrow">→</span></button></div></article>
+        </div>
+        <article class="panel"><div class="panel-heading"><div><h3>Latest records</h3><p class="muted">Most recently saved entries</p></div><button class="text-button" data-go="adminRecords">All records →</button></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Admission no.</th><th>Meal</th><th>Food items</th><th class="align-right">Charge</th></tr></thead><tbody id="adminRecentRows"></tbody></table></div></article>
+      </section>
+
+      <section id="adminRecords" class="view hidden">
+        <div class="page-heading"><div><p class="eyebrow">ADMINISTRATION</p><h1>Meal records</h1><p class="muted">Search and review saved meal entries.</p></div></div>
+        <article class="panel">
+          <div class="toolbar"><input id="recordSearch" type="search" placeholder="Search admission number or food..." /><input id="recordMonth" type="month" aria-label="Filter by month" /><button id="clearRecordFilters" class="button button-outline">Clear filters</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Date</th><th>Admission no.</th><th>Meal</th><th>Food items</th><th class="align-right">Charge</th></tr></thead><tbody id="adminRecordRows"></tbody></table></div>
+        </article>
+      </section>
+
+      <section id="adminPrices" class="view hidden">
+        <div class="page-heading"><div><p class="eyebrow">MESS SETTINGS</p><h1>Food & prices</h1><p class="muted">Set the price for each food item. Changes apply to new calculations and saved meal records are recalculated using current prices.</p></div></div>
+        <article class="panel">
+          <div class="panel-heading"><div><h3>Menu and price list</h3><p class="muted">Prices are in Indian rupees (₹).</p></div><button id="addFoodButton" class="button button-primary">＋ Add food item</button></div>
+          <form id="foodForm" class="food-form hidden"><div><label for="foodName">Food item name</label><input id="foodName" type="text" maxlength="50" placeholder="e.g. Appam" required /></div><div><label for="foodMeal">Meal category</label><select id="foodMeal"><option>Breakfast</option><option>Lunch</option><option>Snacks</option><option>Dinner</option></select></div><div><label for="foodPrice">Price (₹)</label><input id="foodPrice" type="number" min="0" max="100000" step="0.5" placeholder="0.00" required /></div><button class="button button-primary" type="submit">Add item</button><button id="cancelFoodButton" class="button button-outline" type="button">Cancel</button></form>
+          <div class="table-wrap"><table><thead><tr><th>Food item</th><th>Meal category</th><th class="align-right">Price</th><th class="align-right">Action</th></tr></thead><tbody id="foodPriceRows"></tbody></table></div>
+          <p class="hint">Demo note: meal records store the selected item IDs; bill totals use the current menu prices.</p>
+        </article>
+      </section>
+
+      <section id="adminBills" class="view hidden">
+        <div class="page-heading"><div><p class="eyebrow">MONTH-END BILLING</p><h1>Monthly bills</h1><p class="muted">Choose a month and generate individual bills from the meal records saved in this browser.</p></div></div>
+        <article class="panel billing-controls"><div><label for="adminBillMonth">Billing month</label><input id="adminBillMonth" type="month" /></div><div><button id="generateBillsButton" class="button button-primary">Generate monthly bills</button></div></article>
+        <div id="adminBillResults" class="bill-results"></div>
+      </section>
+
+      <footer class="app-footer">MessMate Prototype <span>•</span> Data is stored locally in this browser</footer>
+    </main>
+  </div>
+
+  <div id="foodEditModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="foodEditTitle">
+    <div class="modal">
+      <div class="modal-heading"><div><p class="eyebrow">MENU SETTINGS</p><h2 id="foodEditTitle">Edit food item</h2></div><button id="closeFoodModal" class="icon-button" aria-label="Close">×</button></div>
+      <form id="editFoodForm"><input id="editFoodId" type="hidden" /><label for="editFoodName">Food item name</label><input id="editFoodName" type="text" maxlength="50" required /><label for="editFoodMeal">Meal category</label><select id="editFoodMeal"><option>Breakfast</option><option>Lunch</option><option>Snacks</option><option>Dinner</option></select><label for="editFoodPrice">Price (₹)</label><input id="editFoodPrice" type="number" min="0" max="100000" step="0.5" required /><div class="modal-actions"><button id="cancelEditFood" type="button" class="button button-outline">Cancel</button><button type="submit" class="button button-primary">Save changes</button></div></form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
